@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Site bobo 4</title>
+  <style>
+    /* Estilos gerais do site */
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #f8cdda, #1d2b64);
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      position: relative;
+    }
+    h1, h2, h3 {
+      text-align: center;
+      margin-top: 20px;
+      animation: pulse 2s infinite;
+      position: relative;
+      z-index: 10;
+      pointer-events: none;
+    }
+    h1 { font-size: 2.5em; }
+    h2 { font-size: 1em; }
+    h3 { font-size: 1em; }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Estilos das cartas */
+    .carta {
+      position: absolute;
+      width: 100px;
+      height: 70px;
+      background: #fff;
+      color: #000;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 5;
+      animation: flutuar 10s infinite ease-in-out alternate, fadeIn 1s ease-out;
+      transition: transform 0.3s;
+    }
+    .carta:hover {
+      transform: scale(1.2) rotate(5deg);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+    }
+    .carta:active {
+      transform: scale(1.5) rotate(10deg);
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    }
+
+    @keyframes flutuar { from { transform: translateY(0px); } to { transform: translateY(-30px); } }
+    @keyframes fadeIn { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+
+    /* Mensagem central */
+    .mensagem {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.9);
+      color: #000;
+      padding: 20px;
+      border-radius: 10px;
+      display: none;
+      text-align: center;
+      z-index: 10;
+    }
+    .fechar {
+      margin-top: 10px;
+      background: #ff4d6d;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* Pontuação */
+    .contador-pontos {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 1.2em;
+      z-index: 50;
+    }
+
+    /* Indicação de teclas */
+    .teclas-indicacao {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-size: 1.2em;
+      z-index: 20;
+    }
+
+    /* Caixinha de presente */
+    #presente {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 300px;
+      height: 300px;
+      background: linear-gradient(45deg, #ff69b4, #ff1493);
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255, 105, 180, 0.7);
+      transform: translate(-50%, -50%) scale(0);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      transition: transform 0.5s ease;
+      z-index: 1000;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1.2em;
+    }
+    #presente.ativo {
+      display: flex;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* Estilo da mensagem especial */
+    #mensagemEspecial {
+      display: none;
+      position: fixed;
+      bottom: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      color: #ff4d6d;
+      padding: 20px 30px;
+      border-radius: 15px;
+      font-size: 2em;
+      font-weight: bold;
+      text-align: center;
+      z-index: 100;
+      animation: fadeIn 2s ease forwards;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Site bobo 4</h1>
+  <h2>(Clique em qualquer lugar da tela antes de abrir as cartas)</h2>
+  <h3>(É sério maluca)</h3>
+
+  <audio id="musica" autoplay loop>
+    <source src="@fitzandthetantrums - Out Of My League (Lyrics).mp3" type="audio/mp3">
+    Seu navegador não suporta áudio.
+  </audio>
+
+  <div id="container"></div>
+
+  <div id="mensagem" class="mensagem">
+    <p id="textoMensagem"></p>
+    <button class="fechar" onclick="fecharMensagem()">Fechar</button>
+  </div>
+
+  <div id="indicacaoTeclas" class="teclas-indicacao">
+    Pressione <strong>Ctrl + Alt + L</strong> para desbloquear uma surpresa!
+  </div>
+
+  <div id="presente">
+    🎁<br>
+    <span id="textoSenha">Senha Secreta: IgrisBeru</span><br><br>
+    <span id="contador"></span>
+  </div>
+
+  <div id="mensagemEspecial">
+    Bom, e você realmente veio no horário combinado, que pontualidade, sempre soube que você era incrível, na verdade não teve nenhum motivo específico para esse horário, só queria dizer o quanto eu te amo, e eu não sei nem descrever, e realmente não saberia o que fazer caso você me abandonasse, mas obrigado por tudo que fez por mim até hoje, te amo minha princesa!❤
+  </div>
+
+  <script>
+    const mensagens = [
+      "Você é bem mais que um sonho meu realizado ✨",
+      "Te amo mais a cada dia, hora, minuto, segundo ❤️",
+      "Nem gosto de livros, mas nossa história de romance é minha favorita 📖",
+      "Quero viver todas as minhas vidas ao seu lado 🌎",
+      "Seu sorriso ilumina meu mundo, e teus olhos me fazem me perder no seu mundo ☀️",
+      "Você é a melhor parte de todos os meus dias 💖",
+      "Cada momento contigo vale mais que qualquer quantia em dinheiro 💎",
+      "Te amar é fácil, difícil é não amar 🌸"
+    ];
+
+    const perguntas = [
+      "Carta protegida por senha. Colete 20 corações e volte aqui mais tarde!"
+    ];
+
+    let teclasPressionadas = [];
+    let cartasPosicionadas = [];
+
+    function gerarPosicaoUnica() {
+      let topPosition, leftPosition, tentativa = 0;
+      do {
+        topPosition = Math.random() * (window.innerHeight - 100);
+        leftPosition = Math.random() * (window.innerWidth - 100);
+        tentativa++;
+      } while (tentarColisao(topPosition, leftPosition) && tentativa < 100);
+      return { topPosition, leftPosition };
+    }
+
+    function tentarColisao(topPosition, leftPosition) {
+      return cartasPosicionadas.some(carta => {
+        const distX = Math.abs(carta.left - leftPosition);
+        const distY = Math.abs(carta.top - topPosition);
+        return distX < 100 && distY < 70;
+      });
+    }
+
+    function criarCartas() {
+      const container = document.getElementById('container');
+
+      for (let i = 0; i < 7; i++) {
+        const carta = document.createElement('div');
+        carta.className = 'carta';
+        const { topPosition, leftPosition } = gerarPosicaoUnica();
+        carta.style.top = `${topPosition}px`;
+        carta.style.left = `${leftPosition}px`;
+        carta.innerText = "💌";
+        carta.onclick = () => abrirMensagem(i);
+        container.appendChild(carta);
+        cartasPosicionadas.push({ top: topPosition, left: leftPosition });
+      }
+
+      const cartaCadeado = document.createElement('div');
+      cartaCadeado.className = 'carta';
+      const { topPosition, leftPosition } = gerarPosicaoUnica();
+      cartaCadeado.style.top = `${topPosition}px`;
+      cartaCadeado.style.left = `${leftPosition}px`;
+      cartaCadeado.innerText = "🔒";
+      cartaCadeado.onclick = perguntarResposta;
+      container.appendChild(cartaCadeado);
+      cartasPosicionadas.push({ top: topPosition, left: leftPosition });
+    }
+
+    function abrirMensagem(indice) {
+      document.getElementById('textoMensagem').innerText = mensagens[indice];
+      document.getElementById('mensagem').style.display = 'block';
+    }
+
+    function fecharMensagem() {
+      document.getElementById('mensagem').style.display = 'none';
+    }
+
+    function perguntarResposta() {
+      const respostaCorreta = "IgrisBeru";
+      const resposta = prompt(perguntas[0]);
+      if (resposta && resposta.toLowerCase() === respostaCorreta.toLowerCase()) {
+        alert("Parabéns! Você desbloqueou uma mensagem especial! ❤️");
+      } else {
+        alert("Resposta errada. Tente novamente!");
+      }
+    }
+
+    function detectarCombinacaoTeclas(event) {
+      teclasPressionadas.push(event.key);
+      if (teclasPressionadas.includes("Control") && teclasPressionadas.includes("Alt") && teclasPressionadas.includes("l")) {
+        desbloquearSurpresa();
+        teclasPressionadas = [];
+      }
+    }
+
+    document.addEventListener('click', () => {
+      const musica = document.getElementById('musica');
+      if (musica.paused) musica.play().catch(() => {});
+    }, { once: true });
+
+    window.addEventListener('keydown', detectarCombinacaoTeclas);
+    criarCartas();
+
+    let pontos = 0;
+    const pontosParaDesbloqueio = 20;
+    const senhaSecreta = "IgrisBeru";
+    const contador = document.createElement('div');
+    contador.className = 'contador-pontos';
+    contador.innerHTML = `💘 Pontos: <strong>0</strong>`;
+    document.body.appendChild(contador);
+
+    function atualizarContador() {
+      contador.innerHTML = `💘 Pontos: <strong>${pontos}</strong>`;
+    }
+
+    setInterval(() => {
+      criarIconeMagico();
+    }, 800);
+
+    function criarIconeMagico() {
+      const icone = document.createElement('div');
+      icone.innerText = "💘";
+      icone.style.position = 'absolute';
+      icone.style.fontSize = `${Math.random() * 20 + 20}px`;
+      icone.style.top = `${Math.random() * window.innerHeight}px`;
+      icone.style.left = `${Math.random() * window.innerWidth}px`;
+      icone.style.opacity = 0;
+      icone.style.transition = 'opacity 0.5s ease, transform 1s ease';
+      icone.style.cursor = 'pointer';
+      icone.style.zIndex = 15;
+      document.body.appendChild(icone);
+
+      requestAnimationFrame(() => {
+        icone.style.opacity = 1;
+        icone.style.transform = `translateY(-30px) scale(1.2) rotate(${Math.random() * 360}deg)`;
+      });
+
+      const desaparecer = setTimeout(() => {
+        icone.style.opacity = 0;
+        setTimeout(() => icone.remove(), 500);
+      }, 3000);
+
+      icone.addEventListener('click', (e) => {
+        clearTimeout(desaparecer);
+        icone.remove();
+        pontos++;
+        atualizarContador();
+        if (pontos === pontosParaDesbloqueio) setTimeout(mostrarPresente, 300);
+      });
+    }
+
+    let tempoRestante = 15;
+    let contadorInterval;
+
+    function mostrarPresente() {
+      const presente = document.getElementById('presente');
+      document.getElementById('textoSenha').innerText = `Senha Secreta: ${senhaSecreta}`;
+      presente.classList.add('ativo');
+      iniciarContagemRegressiva();
+    }
+
+    function iniciarContagemRegressiva() {
+      const contadorElemento = document.getElementById('contador');
+      contadorInterval = setInterval(() => {
+        contadorElemento.innerText = `Será fechado em: ${tempoRestante}s`;
+        tempoRestante--;
+        if (tempoRestante < 0) {
+          clearInterval(contadorInterval);
+          fecharPresente();
+        }
+      }, 1000);
+    }
+
+    function fecharPresente() {
+      const presente = document.getElementById('presente');
+      presente.classList.remove('ativo');
+      setTimeout(() => {
+        presente.style.display = 'none';
+        tempoRestante = 15;
+      }, 500);
+    }
+
+    function desbloquearSurpresa() {
+      alert('Você ativou uma mensagem secreta! Volte quando for 23:00 para visualizá-la 🎉');
+    }
+
+    // Função para mostrar a mensagem especial
+    function verificarMensagemEspecial() {
+      const agora = new Date();
+      const hora = agora.getHours();
+      const mensagemDiv = document.getElementById('mensagemEspecial');
+      if (hora === 23) {
+        mensagemDiv.style.display = 'block';
+      } else {
+        mensagemDiv.style.display = 'none';
+      }
+    }
+
+    verificarMensagemEspecial();
+    setInterval(verificarMensagemEspecial, 60000);
+
+  </script>
+</body>
+</html>
